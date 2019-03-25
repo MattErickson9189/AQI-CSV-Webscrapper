@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.support.ui import Select
 import sys, os
 browser = webdriver.Firefox()
 
@@ -21,4 +22,5 @@ states = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado",
 
 browser.get(URL)
 
-browser.find
+year = browser.find_element_by_id("year")
+year.select_by_value("1980")
