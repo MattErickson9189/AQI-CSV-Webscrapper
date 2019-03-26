@@ -1,6 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
-import sys, os
+import sys, os, time
 browser = webdriver.Firefox()
 
 URL = "https://www.epa.gov/outdoor-air-quality-data/air-quality-statistics-report"
@@ -21,6 +21,17 @@ states = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado",
 
 
 browser.get(URL)
+time.sleep(4)
+year = Select(browser.find_element_by_id('year'))
+year.select_by_visible_text('1980')
 
-year = browser.find_element_by_id("year")
-year.select_by_value("1980")
+state = Select(browser.find_element_by_id('state'))
+state.select_by_visible_text('Alabama')
+
+browser.find_element_by_css_selector('#sumlevel > div:nth-child(2) > label').click()
+
+browser.find_element_by_css_selector('#launch > input[type="button"]').click()
+
+time.sleep(10)
+
+browser.find_element_by_css_selector('#results > p:nth-child(2) > a:nth-child(4)').click()
