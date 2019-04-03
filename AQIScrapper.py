@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import WebDriverWait
 import os
 import time
 import shutil
@@ -10,7 +11,9 @@ URL = "https://www.epa.gov/outdoor-air-quality-data/air-quality-statistics-repor
 path = "./Data/"
 downloads = '/home/matt/Downloads/'
 #Array to store the desired dates
-dates = ["1980","1985","1990","1995","2000","2005","2010","2015","2019"]
+#dates = ["1980","1985","1990","1995","2000","2005","2010","2015","2019"]
+dates = ["1981","1982","1983","1984","1986","1987","1988","1989","1991","1992","1993","1994","1996","1997","1998","1999"]
+timeout = 10
 
 #Array to store the desired states
 states = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado",
@@ -25,24 +28,50 @@ states = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado",
 
 browser.get(URL)
 time.sleep(4)
-year = Select(browser.find_element_by_id('year'))
-year.select_by_visible_text(dates[0])
 
-state = Select(browser.find_element_by_id('state'))
-state.select_by_visible_text(states[0])
+for i in range(len(dates)):
+    year = Select(browser.find_element_by_id('year'))
+    year.select_by_visible_text(dates[i])
+    time.sleep(6)
+    for j in range(50):
 
-browser.find_element_by_css_selector('#sumlevel > div:nth-child(2) > label').click()
+        try:
+            state = Select(browser.find_element_by_id('state'))
+            state.select_by_visible_text(states[j])
 
-browser.find_element_by_css_selector('#launch > input[type="button"]').click()
 
-time.sleep(10)
+            time.sleep(4)
+            try:
+                browser.find_element_by_css_selector('#sumlevel > div:nth-child(2) > label').click()
+            except Exception:
+                print("Trying Again")
+                time.sleep(5)
+                browser.find_element_by_css_selector('#sumlevel > div:nth-child(2) > label').click()
 
-browser.find_element_by_css_selector('#results > p:nth-child(2) > a:nth-child(4)').click()
+            time.sleep(4)
+            try:
+                browser.find_element_by_css_selector('#launch > input[type="button"]').click()
+            except Exception:
+                print("Trying Again")
+                time.sleep(5)
+                browser.find_element_by_css_selector('#launch > input[type="button"]').click()
 
-if not os.path.exists(path + states[0] + '/'):
-    os.mkdir(path + states[0] + '/')
+            time.sleep(10)
+            try:
+                browser.find_element_by_css_selector('#results > p:nth-child(2) > a:nth-child(4)').click()
+            except Exception:
+                print("Trying again")
+                time.sleep(5)
+                browser.find_element_by_css_selector('#results > p:nth-child(2) > a:nth-child(4)').click()
 
-destPath = path + states[0] + '/' + states[0] + dates[0] + ".csv"
-srcPath = downloads + '/conreport' + dates[0] + '.csv'
-#Moves the file
-shutil.move(srcPath,destPath)
+            if not os.path.exists(path + dates[i] + '/'):
+                os.mkdir(path + dates[i] + '/')
+
+            destPath = path + dates[i] + '/' + states[j] + dates[i] + ".csv"
+            srcPath = downloads + 'conreport' + dates[i] + '.csv'
+            #Moves the file
+            time.sleep(2)
+            shutil.move(srcPath,destPath)
+        except Exception:
+            print("Something went wrong...Trying again")
+            j -= 1
