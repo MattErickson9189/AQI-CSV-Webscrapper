@@ -34,6 +34,6 @@ for i in range(len(years)):
                     tuple = files, " mean: ", "{0:.2f}".format(mean)
                     message = ''.join(tuple)
                     print(message)
-                    f = open(years[i]+".txt","w")
-                    f.write(message + "/n")
+                    f = open(years[i]+".txt","a+")
+                    f.write(message + "\n")
 
